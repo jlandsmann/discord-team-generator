@@ -30,3 +30,5 @@ repo/
 out/
 META-INF/
 dependency-reduced-pom.xml
+
+team-generator.properties
