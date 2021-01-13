@@ -1,4 +1,4 @@
-package de.jlandsmann.discordTeamGenerator;
+package de.jlandsmann.discordTeamGenerator.utils;
 
 import java.util.*;
 

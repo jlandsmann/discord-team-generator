@@ -7,14 +7,14 @@ import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import org.apache.log4j.BasicConfigurator;
 
 import javax.security.auth.login.LoginException;
-import java.io.IOException;
 
-public class DiscordTeamGenerator {
+public class Main {
 
     public static void main(String[] args) {
         final var jda = initJDA();
         jda.setEventManager(new AnnotatedEventManager());
         jda.addEventListener(new MessageListener());
+        System.out.println("Done");
     }
 
     private static JDA initJDA() {
