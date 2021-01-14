@@ -16,7 +16,10 @@ public class ListUtils {
         return list.remove(idx);
     }
 
-    public static <T> List<List<T>> split(List<T> items, int chunkCount) {
+    public static <T> List<List<T>> split(List<T> items, int chunkCount) throws IllegalArgumentException {
+        if (chunkCount < 0) {
+            throw new IllegalArgumentException();
+        }
         List<List<T>> chunks = initChunks(chunkCount);
         fillChunks(chunks, items);
         return chunks;
@@ -31,13 +34,16 @@ public class ListUtils {
     }
 
     private static <T> void fillChunks(List<List<T>> chunks, List<T> originalItems) {
+        final int chunkCount = chunks.size();
+        if (chunkCount < 1) {
+            return;
+        }
         final var items = new ArrayList<>(originalItems);
         Collections.shuffle(items);
-        final int listSize = items.size();
         int chunkIndex = 0;
         while (!items.isEmpty()) {
             final var item = items.remove(0);
-            final var chunk = chunks.get(chunkIndex % listSize);
+            final var chunk = chunks.get(chunkIndex % chunkCount);
             chunk.add(item);
             chunkIndex++;
         }
