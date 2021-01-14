@@ -3,59 +3,64 @@ package de.jlandsmann.discordTeamGenerator;
 import de.jlandsmann.discordTeamGenerator.utils.ListUtils;
 import de.jlandsmann.discordTeamGenerator.utils.NameProvider;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TeamGenerator {
+public abstract class TeamGenerator<T> {
 
-    private static final int DEFAULT_TEAM_COUNT = 2;
+    protected static final int DEFAULT_TEAM_COUNT = 2;
 
-    public static MessageEmbed generateTeams(List<Member> members, Integer teamCount) {
-        if (teamCount == null) {
-            teamCount = DEFAULT_TEAM_COUNT;
-        }
-        final var teams = getTeamsFromMembers(members, teamCount);
-        return transformTeamsToMessageEmbed(teams);
+    private final List<T> items;
+    private final int teamCount;
+    private final List<String> teamNames;
+
+    protected TeamGenerator(List<T> items, Integer teamCount) {
+        this.items = items;
+        this.teamCount = (teamCount == null) ? DEFAULT_TEAM_COUNT : teamCount;
+        this.teamNames = NameProvider.getNames();
+        Collections.shuffle(this.teamNames);
     }
 
-    private static List<List<Member>> getTeamsFromMembers(List<Member> members, int teamCount) {
-        return ListUtils.split(members, teamCount);
+    public List<List<T>> generate() {
+        return ListUtils.split(items, teamCount);
+    }
+
+    public MessageEmbed generateWithResponse() {
+        List<List<T>> teams = this.generate();
+        return generateMessageEmbedForReply(teams);
     }
 
 
-    private static MessageEmbed transformTeamsToMessageEmbed(List<List<Member>> teams) {
+    protected MessageEmbed generateMessageEmbedForReply(List<List<T>> teams) {
         final var embedBuilder = new EmbedBuilder();
-        final var teamNames = NameProvider.getNames();
-        Collections.shuffle(teamNames);
         for (final var team : teams) {
-            final var teamName = ListUtils.getNext(teamNames);
+            final var teamName = ListUtils.getNext(this.teamNames);
             final var field = createFieldForTeam(teamName, team);
             embedBuilder.addField(field);
         }
         return embedBuilder.build();
     }
 
-    private static MessageEmbed.Field createFieldForTeam(String teamName, List<Member> team) {
+    protected MessageEmbed.Field createFieldForTeam(String teamName, List<T> team) {
         final var members = transformMembersToString(team);
         return new MessageEmbed.Field(teamName, members, true);
     }
 
-    private static String transformMembersToString(List<Member> members) {
-        if (members.isEmpty()) {
+    protected String transformMembersToString(List<T> items) {
+        if (items.isEmpty()) {
             return "*Keine Mitglieder*";
         }
         final var stringBuilder = new StringBuilder();
-        for (Member member : members) {
-            stringBuilder.append(member.getAsMention());
+        for (T member : items) {
+            final var name = transformMemberToString(member);
+            stringBuilder.append(name);
             stringBuilder.append("\n");
         }
         final var result = stringBuilder.toString();
         return result.substring(0, result.length() - 1);
     }
+
+    protected abstract String transformMemberToString(T item);
 }

@@ -34,7 +34,7 @@ public class MessageListener {
     private void generateTeams(Message message, Integer teamCount) {
         final var voiceChannel = MessageUtils.getVoiceChannelOfMessageSender(message);
         final var users = MessageUtils.getUsersOfChannel(voiceChannel);
-        final var response = TeamGenerator.generateTeams(users, teamCount);
+        final var response = MemberTeamGenerator.generateTeams(users, teamCount);
         final var responseAction = message.reply(response);
         responseAction.queue();
     }
