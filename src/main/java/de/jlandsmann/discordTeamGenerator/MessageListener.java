@@ -26,6 +26,10 @@ public class MessageListener {
 
         switch (command.toLowerCase()) {
             case "-generate-teams":
+            case "/teams":
+            case "-teams":
+            case "-t":
+            case "/t":
                 Integer teamCount = CommandUtils.getIntFromString(argument);
                 this.generateTeams(message, teamCount);
         }
