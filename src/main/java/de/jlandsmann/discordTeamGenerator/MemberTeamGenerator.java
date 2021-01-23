@@ -12,7 +12,7 @@ public class MemberTeamGenerator extends TeamGenerator<Member> {
         return generator.generateWithResponse();
     }
 
-    protected MemberTeamGenerator(List<Member> members, int teamCount) {
+    protected MemberTeamGenerator(List<Member> members, Integer teamCount) {
         super(members, teamCount);
     }
 
